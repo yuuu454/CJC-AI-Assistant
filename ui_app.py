@@ -453,15 +453,15 @@ USER QUESTION:
 FINAL ANSWER (context only):
 """
 
-    # Invoke the LLM safely
-    try:
-        response = st.session_state.llm.invoke(prompt)
-    except Exception as e:
-        response = f"😔 AI failed to generate an answer. ({str(e)})"
+ # Invoke the LLM safely
+try:
+    response = st.session_state.hf_client.text_generation(
+        prompt,
+        max_new_tokens=512
+    )
+except Exception as e:
+    response = f"😔 AI failed to generate an answer. ({str(e)})"
 
-    info.empty()
-    bar.empty()
-    return response
 
 
 st.markdown("<h2>📘 CFAIA Assistant</h2>", unsafe_allow_html=True)
