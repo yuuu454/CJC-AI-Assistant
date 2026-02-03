@@ -1,15 +1,10 @@
 import os
 import json
 import streamlit as st
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.llms import HuggingFaceEndpoint
-from langchain_ollama import OllamaLLM
-
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.llms import HuggingFaceHub
-import os
-
+from langchain_ollama import OllamaLLM
 import time
 import re  # <- anti-prompt-injection
 
@@ -362,9 +357,8 @@ def build_or_load_vector_store(text):
 
 @st.cache_resource
 def init_llm():
-
     return OllamaLLM(model="CFAIA:latest")
-    
+
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
 if st.session_state.llm is None:
@@ -435,7 +429,7 @@ def ask_question(query, k=5, overlap=200):
 SYSTEM RULES – Manipulation Guard:
 
 
-You are CFAIA, a handbook-only assistant.
+You are a handbook assistant.
 
 Use ONLY the handbook context below to answer the question.
 Do not add information that is not in the handbook.
@@ -450,15 +444,15 @@ USER QUESTION:
 FINAL ANSWER (context only):
 """
 
- # Invoke the LLM safely
-try:
-    response = st.session_state.hf_client.text_generation(
-        prompt,
-        max_new_tokens=512
-    )
-except Exception as e:
-    response = f"😔 AI failed to generate an answer. ({str(e)})"
+    # Invoke the LLM safely
+    try:
+        response = st.session_state.llm.invoke(prompt)
+    except Exception as e:
+        response = f"😔 AI failed to generate an answer. ({str(e)})"
 
+    info.empty()
+    bar.empty()
+    return response
 
 
 st.markdown("<h2>📘 CFAIA Assistant</h2>", unsafe_allow_html=True)
