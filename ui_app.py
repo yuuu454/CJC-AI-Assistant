@@ -360,10 +360,12 @@ def build_or_load_vector_store(text):
 
 @st.cache_resource
 def init_llm():
-    return HuggingFaceHub(
+    return HuggingFaceEndpoint(
         repo_id="google/flan-t5-base",
         huggingfacehub_api_token=os.environ["HUGGINGFACEHUB_API_TOKEN"],
-        model_kwargs={"temperature": 0.2, "max_length": 512}
+        task="text2text-generation",
+        max_new_tokens=512
+    )
     )
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
