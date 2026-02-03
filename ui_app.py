@@ -2,6 +2,7 @@ import os
 import json
 import streamlit as st
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_ollama import OllamaLLM
 
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
