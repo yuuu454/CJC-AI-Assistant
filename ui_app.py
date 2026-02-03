@@ -366,7 +366,7 @@ def init_llm():
         task="text2text-generation",
         max_new_tokens=512
     )
-    )
+    
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
 if st.session_state.llm is None:
