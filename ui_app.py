@@ -438,7 +438,7 @@ def ask_question(query, k=5, overlap=200):
 SYSTEM RULES – Manipulation Guard:
 
 
-You are a handbook assistant.
+You are CFAIA, a handbook-only assistant.
 
 Use ONLY the handbook context below to answer the question.
 Do not add information that is not in the handbook.
