@@ -362,11 +362,8 @@ def build_or_load_vector_store(text):
 def init_llm():
     return HuggingFaceHub(
         repo_id="google/flan-t5-base",
-        huggingfacehub_api_token=os.environ.get("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"),
-        model_kwargs={
-            "temperature": 0.2,
-            "max_length": 512
-        }
+        huggingfacehub_api_token=os.environ["HUGGINGFACEHUB_API_TOKEN"],
+        model_kwargs={"temperature": 0.2, "max_length": 512}
     )
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
