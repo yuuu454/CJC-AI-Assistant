@@ -360,7 +360,13 @@ def build_or_load_vector_store(text):
 
 @st.cache_resource
 def init_llm():
-    return OllamaLLM(model="CFAIA:latest")
+    return HuggingFaceHub(
+        repo_id="google/flan-t5-base",
+        model_kwargs={
+            "temperature": 0.2,
+            "max_length": 512
+        }
+    )
 
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
