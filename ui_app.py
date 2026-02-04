@@ -362,7 +362,7 @@ import streamlit as st
 
 @st.cache_resource
 @st.cache_resource
-def load_llm():
+def init_llm():
     return OllamaLLM(
         model="CFAIA",
         base_url="http://127.0.0.1:11434"
