@@ -357,8 +357,6 @@ def build_or_load_vector_store(text):
     return db
 from langchain_ollama import OllamaLLM
 @st.cache_resource
-
-
 llm = OllamaLLM(
     model="CFAIA",
     base_url="http://127.0.0.1:11434"
