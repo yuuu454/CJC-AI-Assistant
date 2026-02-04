@@ -357,6 +357,7 @@ def build_or_load_vector_store(text):
         db = FAISS.load_local(FAISS_DIR, embeddings, allow_dangerous_deserialization=True)
     return db
 
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
 @st.cache_resource
 def init_llm():
     return Ollama(
