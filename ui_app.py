@@ -360,12 +360,21 @@ def build_or_load_vector_store(text):
     return db
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
+import streamlit as st
+from langchain.llms import Ollama
+
 @st.cache_resource
 def init_llm():
     return Ollama(
         model="CFAIA",
-        base_url=OLLAMA_BASE_URL
+        base_url=OLLAMA_BASE_URL,  # make sure this is correct
+        temperature=0.7,
+        n_ctx=512
     )
+
+if "llm" not in st.session_state:
+    st.session_state.llm = init_llm()
+
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
 if st.session_state.llm is None:
