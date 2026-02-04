@@ -365,13 +365,13 @@ import streamlit as st
 from langchain.llms import Ollama
 
 @st.cache_resource
-def init_llm():
-    return Ollama(
-        model="CFAIA",
-        base_url=OLLAMA_BASE_URL,  # make sure this is correct
-        temperature=0.7,
-        n_ctx=512
-    )
+@st.cache_resource
+def load_model():
+    return Ollama(model="ollama-model-name", base_url=OLLAMA_BASE_URL)
+
+# Load the model
+model = load_model()
+)
 
 if "llm" not in st.session_state:
     st.session_state.llm = init_llm()
