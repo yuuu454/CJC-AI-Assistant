@@ -355,9 +355,9 @@ def build_or_load_vector_store(text):
     else:
         db = FAISS.load_local(FAISS_DIR, embeddings, allow_dangerous_deserialization=True)
     return db
-
-@st.cache_resource
 from langchain_ollama import OllamaLLM
+@st.cache_resource
+
 
 llm = OllamaLLM(
     model="CFAIA",
