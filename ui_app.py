@@ -359,7 +359,7 @@ def build_or_load_vector_store(text):
 @st.cache_resource
 # Ensure this points to your running Ollama
 llm = OllamaLLM(
-    model="CFAIA",
+    model="CFAIA",)
     base_url="http://127.0.0.1:11434"
 )
 if st.session_state.vector_store is None:
