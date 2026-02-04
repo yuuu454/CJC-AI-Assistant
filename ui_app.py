@@ -362,16 +362,17 @@ def build_or_load_vector_store(text):
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
 import streamlit as st
-from langchain.llms import Ollama
 
-@st.cache_resource
+
+OLLAMA_BASE_URL = (os.getenv("OLLAMA_BASE_URL") or "").strip()
+
+# Cache model so it survives restarts
 @st.cache_resource
 def load_model():
     return Ollama(model="ollama-model-name", base_url=OLLAMA_BASE_URL)
 
 # Load the model
 model = load_model()
-
 if "llm" not in st.session_state:
     st.session_state.llm = init_llm()
 
