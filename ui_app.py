@@ -371,7 +371,6 @@ def load_model():
 
 # Load the model
 model = load_model()
-)
 
 if "llm" not in st.session_state:
     st.session_state.llm = init_llm()
