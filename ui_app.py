@@ -3,6 +3,7 @@ import json
 import streamlit as st
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaLLM
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL"
 
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -358,8 +359,10 @@ def build_or_load_vector_store(text):
 
 @st.cache_resource
 def init_llm():
-    return OllamaLLM(model="CFAIA:latest")
-
+    return Ollama(
+        model="CFAIA",
+        base_url=OLLAMA_BASE_URL
+    )
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
 if st.session_state.llm is None:
