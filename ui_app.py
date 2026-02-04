@@ -1,11 +1,12 @@
 import os
+import json
 import streamlit as st
-from ollama import Ollama
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_ollama import OllamaLLM
 import time
-import re
+import re  # <- anti-prompt-injection
 
 # ===========================
 # 🔧 STREAMLIT SETUP
