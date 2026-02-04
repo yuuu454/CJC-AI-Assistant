@@ -361,13 +361,13 @@ from langchain_ollama import OllamaLLM
 import streamlit as st
 
 @st.cache_resource
+@st.cache_resource
 def load_llm():
     return OllamaLLM(
         model="CFAIA",
         base_url="http://127.0.0.1:11434"
     )
 
-llm = load_llm()
 
 
 
