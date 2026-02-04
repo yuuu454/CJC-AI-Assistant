@@ -355,12 +355,19 @@ def build_or_load_vector_store(text):
     else:
         db = FAISS.load_local(FAISS_DIR, embeddings, allow_dangerous_deserialization=True)
     return db
+
+
 from langchain_ollama import OllamaLLM
+import streamlit as st
+
 @st.cache_resource
-llm = OllamaLLM(
-    model="CFAIA",
-    base_url="http://127.0.0.1:11434"
-)
+def load_llm():
+    return OllamaLLM(
+        model="CFAIA",
+        base_url="http://127.0.0.1:11434"
+    )
+
+llm = load_llm()
 
 
 
