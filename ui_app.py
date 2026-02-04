@@ -357,11 +357,14 @@ def build_or_load_vector_store(text):
     return db
 
 @st.cache_resource
-st.write("Hello")  # <- missing closing parenthesis
+
+
+# Ensure this points to your running Ollama
 llm = OllamaLLM(
     model="CFAIA",
     base_url="http://127.0.0.1:11434"
 )
+
 
 
 if st.session_state.vector_store is None:
