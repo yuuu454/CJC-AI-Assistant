@@ -1,7 +1,8 @@
 import os
 import json
 import streamlit as st
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
@@ -745,3 +746,4 @@ if st.session_state.time_left <= 0:
     st.session_state.username = ""      # reset username
     st.session_state.time_left = LOGOUT_SECONDS
     st.rerun()  # redirect to login page immediately
+
