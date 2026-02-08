@@ -3,7 +3,7 @@ langchain>=0.1.16
 langchain-ollama
 langchain-community>=0.0.36
 langchain-text-splitters>=0.0.1
-
+langchain-text-splitters
 faiss-cpu>=1.7.4
 huggingface-hub>=0.20.0
 sentence-transformers>=2.2.2
