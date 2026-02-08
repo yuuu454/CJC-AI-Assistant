@@ -1,8 +1,7 @@
 import os
 import json
 import streamlit as st
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
@@ -356,22 +355,9 @@ def build_or_load_vector_store(text):
         db = FAISS.load_local(FAISS_DIR, embeddings, allow_dangerous_deserialization=True)
     return db
 
-
-from langchain_ollama import OllamaLLM
-import streamlit as st
-
-@st.cache_resource
 @st.cache_resource
 def init_llm():
-    return OllamaLLM(
-        model="CFAIA:latest",
-        base_url="http://127.0.0.1:11434"
-    )
-
-
-
-
-
+    return OllamaLLM(model="CFAIA:latest")
 
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
@@ -759,4 +745,3 @@ if st.session_state.time_left <= 0:
     st.session_state.username = ""      # reset username
     st.session_state.time_left = LOGOUT_SECONDS
     st.rerun()  # redirect to login page immediately
-
