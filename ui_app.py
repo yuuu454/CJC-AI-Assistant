@@ -27,7 +27,7 @@ if os.path.exists(USERS_FILE):
     with open(USERS_FILE, "r") as f:
         st.session_state.setdefault("users", json.load(f))
 else:
-    st.session_state.setdefault("users", {})
+    st.session_state.setdefault("users"), {})
 
 # Initialize session state
 st.session_state.setdefault("logged_in", False)
