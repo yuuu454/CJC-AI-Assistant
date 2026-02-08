@@ -365,7 +365,7 @@ import streamlit as st
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="http://https://nonfamilial-alma-rubblier.ngrok-free.dev"
+        base_url="http://127.0.0.1:11434"
     )
 
 
