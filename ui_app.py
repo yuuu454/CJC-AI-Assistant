@@ -355,12 +355,13 @@ def build_or_load_vector_store(text):
     else:
         db = FAISS.load_local(FAISS_DIR, embeddings, allow_dangerous_deserialization=True)
     return db
-
 @st.cache_resource
 def init_llm():
-    return OllamaLLM(model="CFAIA:latest")
-       base_url="http://192.168.1.8:11434"
+    return OllamaLLM(
+        model="CFAIA:latest",
+        base_url="http://192.168.1.8:11434"
     )
+
 
 if st.session_state.vector_store is None:
     st.session_state.vector_store = build_or_load_vector_store(st.session_state.handbook_text)
