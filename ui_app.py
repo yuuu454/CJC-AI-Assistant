@@ -359,7 +359,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="http://192.168.1.8:11434"
+        base_url="https://online-lighting-sorts-penalties.trycloudflare.com/"
     )
 
 
