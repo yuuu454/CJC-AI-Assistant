@@ -359,7 +359,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://western-inventory-dim-nelson.trycloudflare.com"
+        base_url="https://ollama.com"
     )
 
 
