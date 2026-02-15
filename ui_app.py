@@ -359,7 +359,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="carlorossid/cfaia:latesr",
-        base_url="https://ollama.com"
+        base_url="https://ollama.com",
         headers={"Authorization": f"Bearer {st.secrets['OLLAMA_API_KEY']}"}
 
     )
