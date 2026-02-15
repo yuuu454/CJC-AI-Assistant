@@ -358,7 +358,7 @@ def build_or_load_vector_store(text):
 @st.cache_resource
 def init_llm():
     return OllamaLLM(
-        model="carlorossid/cfaia:latest",
+        model="carlorossid/cfaia:latesr",
         base_url="https://ollama.com"
     )
 
