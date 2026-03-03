@@ -359,7 +359,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://cartridge-respect-magnificent-instructional.trycloudflare.com"
+        base_url="https://bouquet-reflects-habits-honors.trycloudflare.com"
       
 
     )
