@@ -155,7 +155,7 @@ if not st.session_state["logged_in"]:
             st.session_state["show_create"] = False
             st.rerun()
 
-    st.stop() i said give me update version of this 
+    st.stop() 
 
 import re
 import time
