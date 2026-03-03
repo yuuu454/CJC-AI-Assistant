@@ -118,54 +118,57 @@ if not st.session_state["logged_in"]:
         if create_btn:
             st.session_state["show_create"] = True
             st.rerun()
+  # ---------------------------
+    # LOGIN SCREEN
+    # ---------------------------
+    if not st.session_state["show_create"]:
+        st.markdown("## 🔑 Login to CFAIA")
 
-        
-    # --------------------------
-# LOGIN SCREEN
-# ---------------------------
-if not st.session_state["show_create"]:
-    st.markdown("## 🔑 Login to CFAIA")
+        username = st.text_input("Username", key="login_user")
+        password = st.text_input("Password", type="password", key="login_pass")
 
-    username = st.text_input("Username", key="login_user")
-    password = st.text_input("Password", type="password", key="login_pass")
+        col1, col2 = st.columns([1,1])
+        with col1:
+            login_btn = st.button("Login")
+        with col2:
+            create_btn = st.button("➕ Create Account")
 
-    col1, col2 = st.columns([1,1])
-    with col1:
-        login_btn = st.button("Login")
-    with col2:
-        create_btn = st.button("➕ Create Account")
+        if login_btn:
+            if username in st.session_state["users"] and st.session_state["users"][username] == password:
+                st.session_state["logged_in"] = True
+                st.session_state["username"] = username
+                st.session_state["failed_attempts"] = 0
+                st.session_state["lock_until"] = 0
+                st.success(f"Welcome back, {username}!")
+                st.rerun()
 
-    if login_btn:
-        if username in st.session_state["users"] and st.session_state["users"][username] == password:
-            st.session_state["logged_in"] = True
-            st.session_state["username"] = username
-            st.session_state["failed_attempts"] = 0
-            st.session_state["lock_until"] = 0
-            st.success(f"Welcome back, {username}!")
+            else:
+                st.session_state["failed_attempts"] += 1
+                attempt = st.session_state["failed_attempts"]
+
+                if attempt == 1:
+                    wait_time = 10
+                    st.session_state["lock_until"] = time.time() + wait_time
+                    st.error("❌ Invalid credentials. Locked for 10 seconds.")
+                    st.rerun()
+
+                elif attempt == 2:
+                    wait_time = 20
+                    st.session_state["lock_until"] = time.time() + wait_time
+                    st.error("❌ Second failed attempt. Locked for 20 seconds.")
+                    st.rerun()
+
+                elif attempt >= 3:
+                    st.error("❌ 3 failed attempts! Login is now disabled. Admin PIN required.")
+                    st.session_state["login_disabled"] = True
+                    st.rerun()
+
+        if create_btn:
+            st.session_state["show_create"] = True
             st.rerun()
-        else:
-            st.session_state["failed_attempts"] += 1
-            attempt = st.session_state["failed_attempts"]
 
-            if attempt == 1:
-                st.session_state["lock_until"] = time.time() + 10
-                st.error("❌ Invalid credentials. Locked for 10 seconds.")
-                st.rerun()
+    else: do it here
 
-            elif attempt == 2:
-                st.session_state["lock_until"] = time.time() + 20
-                st.error("❌ Second failed attempt. Locked for 20 seconds.")
-                st.rerun()
-
-            elif attempt >= 3:
-                st.error("❌ 3 failed attempts! Login is now disabled.")
-                st.session_state["login_disabled"] = True
-                st.rerun()
-
-    if create_btn:
-        st.session_state["show_create"] = True
-        st.rerun()
-else:
 # ---------------------------
 # CREATE ACCOUNT SCREEN
 # ---------------------------
