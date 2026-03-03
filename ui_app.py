@@ -120,63 +120,55 @@ if not st.session_state["logged_in"]:
             st.rerun()
 
     else:   
-  
-    
-  # ---------------------------
-# CREATE ACCOUNT SCREEN
-# ---------------------------
-st.markdown("## 📝 Create New Account")
+  else:
+    # ---------------------------
+    # CREATE ACCOUNT SCREEN
+    # ---------------------------
+    st.markdown("## 📝 Create New Account")
 
-new_user = st.text_input("New Username", key="new_user")
-new_pass = st.text_input("New Password", type="password", key="new_pass")
-confirm_pass = st.text_input("Confirm Password", type="password", key="confirm_pass")
+    new_user = st.text_input("New Username", key="new_user")
+    new_pass = st.text_input("New Password", type="password", key="new_pass")
+    confirm_pass = st.text_input("Confirm Password", type="password", key="confirm_pass")
 
-col1, col2 = st.columns([1,1])
-with col1:
-    save_btn = st.button("Save Account")
-with col2:
-    back_btn = st.button("⬅ Back to Login")
+    col1, col2 = st.columns([1,1])
+    with col1:
+        save_btn = st.button("Save Account")
+    with col2:
+        back_btn = st.button("⬅ Back to Login")
 
-if save_btn:
-    if not new_user.strip() or not new_pass.strip() or not confirm_pass.strip():
-        st.error("❌ All fields are required")
+    if save_btn:
+        if not new_user.strip() or not new_pass.strip() or not confirm_pass.strip():
+            st.error("❌ All fields are required")
+        elif new_pass != confirm_pass:
+            st.error("❌ Passwords do not match")
+        elif new_user in st.session_state["users"]:
+            st.error("❌ Username already exists")
+        else:
+            # Save account automatically
+            st.session_state["users"][new_user] = new_pass
+            save_users()
 
-    elif new_pass != confirm_pass:
-        st.error("❌ Passwords do not match")
+            st.success(f"✅ Account created for {new_user}. Please login now.")
 
-    elif new_user in st.session_state["users"]:
-        st.error("❌ Username already exists")
+            # Auto-fill login username for convenience
+            st.session_state["login_user"] = new_user
+            st.session_state["login_pass"] = ""  # password still empty
 
-    else:
-        # ✅ Save account automatically
-        st.session_state["users"][new_user] = new_pass
-        save_users()
+            # Clear create account fields
+            st.session_state["new_user"] = ""
+            st.session_state["new_pass"] = ""
+            st.session_state["confirm_pass"] = ""
 
-        st.success(f"✅ Account created for {new_user}. Please login now.")
+            # Redirect back to login
+            st.session_state["show_create"] = False
+            st.rerun()
 
-        # ✅ Auto-fill username in login for convenience
-        st.session_state["login_user"] = new_user
-        st.session_state["login_pass"] = ""  # password still empty for security
-
-        # Clear create account fields
+    if back_btn:
         st.session_state["new_user"] = ""
         st.session_state["new_pass"] = ""
         st.session_state["confirm_pass"] = ""
-
-        # Redirect back to login screen
         st.session_state["show_create"] = False
         st.rerun()
-
-if back_btn:
-    # Clear fields when going back
-    st.session_state["new_user"] = ""
-    st.session_state["new_pass"] = ""
-    st.session_state["confirm_pass"] = ""
-
-    st.session_state["show_create"] = False
-    st.rerun()
-
-st.stop()
 
 import re
 import time
