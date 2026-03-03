@@ -167,7 +167,7 @@ if not st.session_state["logged_in"]:
             st.session_state["show_create"] = True
             st.rerun()
 
-    else: do it here
+    else: 
 
 # ---------------------------
 # CREATE ACCOUNT SCREEN
