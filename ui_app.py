@@ -122,39 +122,84 @@ if not st.session_state["logged_in"]:
         else:
 
     # ---------------------------
-        # CREATE ACCOUNT SCREEN
-        # ---------------------------
-        st.markdown("## 📝 Create New Account")
+# LOGIN SCREEN
+# ---------------------------
+if not st.session_state["show_create"]:
+    st.markdown("## 🔑 Login to CFAIA")
 
-        new_user = st.text_input("New Username", key="new_user")
-        new_pass = st.text_input("New Password", type="password", key="new_pass")
-        confirm_pass = st.text_input("Confirm Password", type="password", key="confirm_pass")
+    username = st.text_input("Username", key="login_user")
+    password = st.text_input("Password", type="password", key="login_pass")
 
-        col1, col2 = st.columns([1,1])
-        with col1:
-            save_btn = st.button("Save Account")
-        with col2:
-            back_btn = st.button("⬅ Back to Login")
+    col1, col2 = st.columns([1,1])
+    with col1:
+        login_btn = st.button("Login")
+    with col2:
+        create_btn = st.button("➕ Create Account")
 
-        if save_btn:
-            if not new_user.strip() or not new_pass.strip() or not confirm_pass.strip():
-                st.error("❌ All fields are required")
-            elif new_user in st.session_state["users"]:
-                st.error("❌ Username already exists")
-            elif new_pass != confirm_pass:
-                st.error("❌ Passwords do not match")
-            else:
-                st.session_state["users"][new_user] = new_pass
-                save_users()
-                st.success(f"✅ Account created for {new_user}")
-                st.session_state["show_create"] = False
+    if login_btn:
+        if username in st.session_state["users"] and st.session_state["users"][username] == password:
+            st.session_state["logged_in"] = True
+            st.session_state["username"] = username
+            st.session_state["failed_attempts"] = 0
+            st.session_state["lock_until"] = 0
+            st.success(f"Welcome back, {username}!")
+            st.rerun()
+        else:
+            st.session_state["failed_attempts"] += 1
+            attempt = st.session_state["failed_attempts"]
+
+            if attempt == 1:
+                st.session_state["lock_until"] = time.time() + 10
+                st.error("❌ Invalid credentials. Locked for 10 seconds.")
                 st.rerun()
 
-        if back_btn:
+            elif attempt == 2:
+                st.session_state["lock_until"] = time.time() + 20
+                st.error("❌ Second failed attempt. Locked for 20 seconds.")
+                st.rerun()
+
+            elif attempt >= 3:
+                st.error("❌ 3 failed attempts! Login is now disabled.")
+                st.session_state["login_disabled"] = True
+                st.rerun()
+
+    if create_btn:
+        st.session_state["show_create"] = True
+        st.rerun()
+else:
+# ---------------------------
+# CREATE ACCOUNT SCREEN
+# ---------------------------
+
+    st.markdown("## 📝 Create New Account")
+
+    new_user = st.text_input("New Username", key="new_user")
+    new_pass = st.text_input("New Password", type="password", key="new_pass")
+    confirm_pass = st.text_input("Confirm Password", type="password", key="confirm_pass")
+
+    col1, col2 = st.columns([1,1])
+    with col1:
+        save_btn = st.button("Save Account")
+    with col2:
+        back_btn = st.button("⬅ Back to Login")
+
+    if save_btn:
+        if not new_user.strip() or not new_pass.strip() or not confirm_pass.strip():
+            st.error("❌ All fields are required")
+        elif new_user in st.session_state["users"]:
+            st.error("❌ Username already exists")
+        elif new_pass != confirm_pass:
+            st.error("❌ Passwords do not match")
+        else:
+            st.session_state["users"][new_user] = new_pass
+            save_users()
+            st.success("✅ Account created successfully!")
             st.session_state["show_create"] = False
             st.rerun()
 
-    st.stop()  
+    if back_btn:
+        st.session_state["show_create"] = False
+        st.rerun()
 
 # ===========================
 # 🛡 PROMPT INJECTION GUARD
