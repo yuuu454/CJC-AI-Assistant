@@ -121,13 +121,7 @@ if not st.session_state["logged_in"]:
 
     else:   
   
-    if create_btn:
-        # ✅ CLEAR FIELDS WHEN SWITCHING TO CREATE ACCOUNT
-        st.session_state["login_user"] = ""
-        st.session_state["login_pass"] = ""
-
-        st.session_state["show_create"] = True
-        st.rerun()
+    
         # ---------------------------
         # CREATE ACCOUNT SCREEN
         # ---------------------------
