@@ -15,11 +15,12 @@ import re  # <- anti-prompt-injection
 st.set_page_config(page_title="CJC Handbook RAG Assistant", layout="wide")
 
 # ===========================
-# 🔐 LOGIN WITH CREATE ACCOUNT + FAILED ATTEMPTS
+# 🔐 LOGIN WITH CREATE ACCOUNT + FAILED ATTEMPTS + COUNTDOWN LOCK
 # ===========================
-import os, json, streamlit as st
 
-USERS_FILE = "users.json"   
+import os, json, streamlit as st, time
+
+USERS_FILE = "users.json"
 ADMIN_PASSWORD = "admin123"  # Replace with your secure password
 
 # Load users
@@ -31,15 +32,17 @@ else:
 
 # Initialize session state
 st.session_state.setdefault("logged_in", False)
-st.session_state.setdefault("show_create", False)  # Flag for create account screen
+st.session_state.setdefault("show_create", False)
 st.session_state.setdefault("failed_attempts", 0)
 st.session_state.setdefault("login_disabled", False)
+st.session_state.setdefault("lock_until", 0)  # NEW: timer lock
 
 def save_users():
     with open(USERS_FILE, "w") as f:
         json.dump(st.session_state["users"], f)
 
 if not st.session_state["logged_in"]:
+
     # ---------------------------
     # HANDLE ADMIN UNLOCK
     # ---------------------------
@@ -57,6 +60,18 @@ if not st.session_state["logged_in"]:
         st.stop()
 
     # ---------------------------
+    # CHECK TIMER LOCK
+    # ---------------------------
+    current_time = time.time()
+    if current_time < st.session_state["lock_until"]:
+        remaining_placeholder = st.empty()
+        while time.time() < st.session_state["lock_until"]:
+            remaining = int(st.session_state["lock_until"] - time.time())
+            remaining_placeholder.error(f"⏳ Too many attempts. Try again in {remaining} seconds...")
+            time.sleep(1)
+        st.rerun()
+
+    # ---------------------------
     # LOGIN SCREEN
     # ---------------------------
     if not st.session_state["show_create"]:
@@ -64,6 +79,7 @@ if not st.session_state["logged_in"]:
 
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
+
         col1, col2 = st.columns([1,1])
         with col1:
             login_btn = st.button("Login")
@@ -74,16 +90,29 @@ if not st.session_state["logged_in"]:
             if username in st.session_state["users"] and st.session_state["users"][username] == password:
                 st.session_state["logged_in"] = True
                 st.session_state["username"] = username
-                st.session_state["failed_attempts"] = 0  # Reset failed attempts
+                st.session_state["failed_attempts"] = 0
+                st.session_state["lock_until"] = 0
                 st.success(f"Welcome back, {username}!")
                 st.rerun()
+
             else:
                 st.session_state["failed_attempts"] += 1
-                attempts_left = 3 - st.session_state["failed_attempts"]
-                if attempts_left > 0:
-                    st.error(f"❌ Invalid username or password. {attempts_left} attempts left.")
-                else:
-                    st.error("❌ 3 failed attempts! Login is now disabled. Contact admin to unlock.")
+                attempt = st.session_state["failed_attempts"]
+
+                if attempt == 1:
+                    wait_time = 10
+                    st.session_state["lock_until"] = time.time() + wait_time
+                    st.error("❌ Invalid credentials. Locked for 10 seconds.")
+                    st.rerun()
+
+                elif attempt == 2:
+                    wait_time = 20
+                    st.session_state["lock_until"] = time.time() + wait_time
+                    st.error("❌ Second failed attempt. Locked for 20 seconds.")
+                    st.rerun()
+
+                elif attempt >= 3:
+                    st.error("❌ 3 failed attempts! Login is now disabled. Admin PIN required.")
                     st.session_state["login_disabled"] = True
                     st.rerun()
 
@@ -100,6 +129,7 @@ if not st.session_state["logged_in"]:
         new_user = st.text_input("New Username", key="new_user")
         new_pass = st.text_input("New Password", type="password", key="new_pass")
         confirm_pass = st.text_input("Confirm Password", type="password", key="confirm_pass")
+
         col1, col2 = st.columns([1,1])
         with col1:
             save_btn = st.button("Save Account")
@@ -125,9 +155,6 @@ if not st.session_state["logged_in"]:
             st.rerun()
 
     st.stop()
-
-
-
 
 
 
