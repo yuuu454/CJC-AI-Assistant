@@ -119,8 +119,8 @@ if not st.session_state["logged_in"]:
             st.session_state["show_create"] = True
             st.rerun()
 
-    else:   
-  
+ 
+else:
     # ---------------------------
     # CREATE ACCOUNT SCREEN
     # ---------------------------
@@ -130,7 +130,7 @@ if not st.session_state["logged_in"]:
     new_pass = st.text_input("New Password", type="password", key="new_pass")
     confirm_pass = st.text_input("Confirm Password", type="password", key="confirm_pass")
 
-    col1, col2 = st.columns([1,1])
+    col1, col2 = st.columns([1, 1])
     with col1:
         save_btn = st.button("Save Account")
     with col2:
@@ -144,59 +144,33 @@ if not st.session_state["logged_in"]:
         elif new_user in st.session_state["users"]:
             st.error("❌ Username already exists")
         else:
-            # Save account automatically
+            # ✅ Save account automatically
             st.session_state["users"][new_user] = new_pass
             save_users()
 
             st.success(f"✅ Account created for {new_user}. Please login now.")
 
-            # Auto-fill login username for convenience
+            # ✅ Auto-fill username for convenience in login screen
             st.session_state["login_user"] = new_user
-            st.session_state["login_pass"] = ""  # password still empty
+            st.session_state["login_pass"] = ""  # keep password empty
 
             # Clear create account fields
             st.session_state["new_user"] = ""
             st.session_state["new_pass"] = ""
             st.session_state["confirm_pass"] = ""
 
-            # Redirect back to login
+            # Go back to login screen
             st.session_state["show_create"] = False
             st.rerun()
 
     if back_btn:
+        # Clear create account fields
         st.session_state["new_user"] = ""
         st.session_state["new_pass"] = ""
         st.session_state["confirm_pass"] = ""
+
         st.session_state["show_create"] = False
         st.rerun()
-
-import re
-import time
-import streamlit as st
-
-def detect_prompt_injection(user_input: str) -> bool:
-    for pattern in BLOCK_PATTERNS:
-        if re.search(pattern, user_input, re.IGNORECASE):
-            return True
-    return False
-
-
-def security_logout():
-    st.error("🚨 Request blocked due to manipulation attempt.")
-    time.sleep(2)
-
-    # Force logout
-    st.session_state["logged_in"] = False
-    st.session_state["username"] = "User"
-    st.session_state["messages"] = []
-    st.session_state["chat_history"] = {}
-
-    st.rerun()
-
-
-
-
-
 
 
 
