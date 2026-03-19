@@ -365,6 +365,11 @@ if st.session_state.get("show_greeting", False):
     st.session_state.show_greeting = False
     st.rerun()
 
+# Theme toggle
+dark_mode = st.checkbox("Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
+if dark_mode != (st.session_state.get('theme', 'dark') == 'dark'):
+    toggle_theme()
+
 # ===========================
 # 📘 LOAD HANDBOOK
 # ===========================
@@ -493,11 +498,6 @@ FINAL ANSWER (context only):
 
 
 st.markdown("<h2>📘 CFAIA Assistant</h2>", unsafe_allow_html=True)
-
-# Theme toggle
-dark_mode = st.checkbox("Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
-if dark_mode != (st.session_state.get('theme', 'dark') == 'dark'):
-    toggle_theme()
 
 
 # -----------------------------
