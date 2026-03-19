@@ -34,6 +34,35 @@ h1,h2,h3,p,label { color:white !important; }
 /* GREETING POPUP */
 .greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #0d47a1; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.6); }
 @keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
+/* TOGGLE SWITCH */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 50px;
+  height: 25px;
+  background: #ccc;
+  border-radius: 25px;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+input[type="checkbox"]:checked {
+  background: #0078d4;
+}
+input[type="checkbox"]:before {
+  content: "";
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s;
+}
+input[type="checkbox"]:checked:before {
+  left: 27px;
+}
 </style>
 """
 else:
@@ -51,6 +80,35 @@ h1,h2,h3,p,label { color:#000 !important; }
 /* GREETING POPUP */
 .greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #4a90e2; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.3); }
 @keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
+/* TOGGLE SWITCH */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 50px;
+  height: 25px;
+  background: #ccc;
+  border-radius: 25px;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+input[type="checkbox"]:checked {
+  background: #0078d4;
+}
+input[type="checkbox"]:before {
+  content: "";
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s;
+}
+input[type="checkbox"]:checked:before {
+  left: 27px;
+}
 </style>
 """
 st.markdown(css, unsafe_allow_html=True)
@@ -119,9 +177,7 @@ if not st.session_state["logged_in"]:
         st.markdown("## 🔑 Login to CFAIA")
 
         # Theme toggle
-        dark_mode = st.checkbox("Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
-        if dark_mode != (st.session_state.get('theme', 'dark') == 'dark'):
-            toggle_theme()
+        dark_mode = st.checkbox("Dark Mode", on_change=toggle_theme)
 
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
@@ -173,9 +229,7 @@ if not st.session_state["logged_in"]:
         st.markdown("## 📝 Create New Account")
 
         # Theme toggle
-        dark_mode = st.checkbox("Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
-        if dark_mode != (st.session_state.get('theme', 'dark') == 'dark'):
-            toggle_theme()
+        dark_mode = st.checkbox("Dark Mode", on_change=toggle_theme)
 
         new_user = st.text_input("New Username", key="new_user")
         new_pass = st.text_input("New Password", type="password", key="new_pass")
@@ -366,9 +420,7 @@ if st.session_state.get("show_greeting", False):
     st.rerun()
 
 # Theme toggle
-dark_mode = st.checkbox("Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
-if dark_mode != (st.session_state.get('theme', 'dark') == 'dark'):
-    toggle_theme()
+dark_mode = st.checkbox("Dark Mode", on_change=toggle_theme)
 
 # ===========================
 # 📘 LOAD HANDBOOK
