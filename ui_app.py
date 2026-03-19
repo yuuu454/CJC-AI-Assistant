@@ -11,38 +11,49 @@ import time
 import re  # <- anti-prompt-injection
 
 # ===========================
-# 🌙 THEME TOGGLE FUNCTION
-# ===========================
-def toggleTheme():
-    # Get the current theme
-    current_theme = st.session_state.get('theme', 'light')
-    # Toggle the theme
-    new_theme = 'dark' if current_theme == 'light' else 'light'
-    st.session_state['theme'] = new_theme
-    # Apply the theme
-    if new_theme == 'dark':
-        st.markdown("""
-        <style>
-        body {
-            background-color: #333;
-            color: white;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-        <style>
-        body {
-            background-color: white;
-            color: black;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-# ===========================
 # 🔧 STREAMLIT SETUP
 # ===========================
 st.set_page_config(page_title="CJC Handbook RAG Assistant", layout="wide")
+
+# ===========================
+# 🎨 THEME APPLICATION
+# ===========================
+theme = st.session_state.get('theme', 'dark')
+if theme == "dark":
+    css = """
+<style>
+html, body, [data-testid="stAppViewContainer"] { background:#0a0a0a !important; }
+[data-testid="stSidebar"] { display:none !important; }
+.chat-container { background:#000; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #2f2f2f; }
+.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.4); }
+.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
+.bot-msg { background:#1e1e1e; color:#e5e5e5; margin-right:auto; border-top-left-radius:4px; }
+input { background:#111 !important; color:white !important; border:1px solid #333 !important; border-radius:8px !important; }
+button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
+h1,h2,h3,p,label { color:white !important; }
+/* GREETING POPUP */
+.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #0d47a1; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.6); }
+@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
+</style>
+"""
+else:
+    css = """
+<style>
+html, body, [data-testid="stAppViewContainer"] { background:#ffffff !important; }
+[data-testid="stSidebar"] { display:none !important; }
+.chat-container { background:#f0f0f0; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #ddd; }
+.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.1); }
+.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
+.bot-msg { background:#e0e0e0; color:#333; margin-right:auto; border-top-left-radius:4px; }
+input { background:#fff !important; color:#000 !important; border:1px solid #ccc !important; border-radius:8px !important; }
+button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
+h1,h2,h3,p,label { color:#000 !important; }
+/* GREETING POPUP */
+.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #4a90e2; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.3); }
+@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
+</style>
+"""
+st.markdown(css, unsafe_allow_html=True)
 
 # ===========================
 # 🔐 LOGIN WITH CREATE ACCOUNT + FAILED ATTEMPTS + COUNTDOWN LOCK
@@ -107,6 +118,11 @@ if not st.session_state["logged_in"]:
     if not st.session_state["show_create"]:
         st.markdown("## 🔑 Login to CFAIA")
 
+        # Theme toggle
+        dark_mode = st.checkbox("Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
+        if dark_mode != (st.session_state.get('theme', 'dark') == 'dark'):
+            toggle_theme()
+
         username = st.text_input("Username", key="login_user")
         password = st.text_input("Password", type="password", key="login_pass")
 
@@ -155,6 +171,11 @@ if not st.session_state["logged_in"]:
         # CREATE ACCOUNT SCREEN
         # ---------------------------
         st.markdown("## 📝 Create New Account")
+
+        # Theme toggle
+        dark_mode = st.checkbox("Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
+        if dark_mode != (st.session_state.get('theme', 'dark') == 'dark'):
+            toggle_theme()
 
         new_user = st.text_input("New Username", key="new_user")
         new_pass = st.text_input("New Password", type="password", key="new_pass")
@@ -331,46 +352,6 @@ def toggle_theme():
     st.rerun()
 
 # ===========================
-# 🎨 WINDOWS STYLE UI
-# ===========================
-theme = st.session_state.theme
-if theme == "dark":
-    css = """
-<style>
-html, body, [data-testid="stAppViewContainer"] { background:#0a0a0a !important; }
-[data-testid="stSidebar"] { display:none !important; }
-.chat-container { background:#000; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #2f2f2f; }
-.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.4); }
-.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
-.bot-msg { background:#1e1e1e; color:#e5e5e5; margin-right:auto; border-top-left-radius:4px; }
-input { background:#111 !important; color:white !important; border:1px solid #333 !important; border-radius:8px !important; }
-button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
-h1,h2,h3,p,label { color:white !important; }
-/* GREETING POPUP */
-.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #0d47a1; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.6); }
-@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
-</style>
-"""
-else:
-    css = """
-<style>
-html, body, [data-testid="stAppViewContainer"] { background:#ffffff !important; }
-[data-testid="stSidebar"] { display:none !important; }
-.chat-container { background:#f0f0f0; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #ddd; }
-.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.1); }
-.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
-.bot-msg { background:#e0e0e0; color:#333; margin-right:auto; border-top-left-radius:4px; }
-input { background:#fff !important; color:#000 !important; border:1px solid #ccc !important; border-radius:8px !important; }
-button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
-h1,h2,h3,p,label { color:#000 !important; }
-/* GREETING POPUP */
-.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #4a90e2; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.3); }
-@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
-</style>
-"""
-st.markdown(css, unsafe_allow_html=True)
-
-# ===========================
 # 👋 GREETING POPUP
 # ===========================
 if st.session_state.get("show_greeting", False):
@@ -513,10 +494,10 @@ FINAL ANSWER (context only):
 
 st.markdown("<h2>📘 CFAIA Assistant</h2>", unsafe_allow_html=True)
 
-col1, col2 = st.columns([5,1])
-with col2:
-    if st.button("🌙" if st.session_state.theme == "dark" else "☀️"):
-        toggle_theme()
+# Theme toggle
+dark_mode = st.checkbox("Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
+if dark_mode != (st.session_state.get('theme', 'dark') == 'dark'):
+    toggle_theme()
 
 
 # -----------------------------
