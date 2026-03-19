@@ -15,6 +15,104 @@ import re  # <- anti-prompt-injection
 st.set_page_config(page_title="CJC Handbook RAG Assistant", layout="wide")
 
 # ===========================
+# 🎨 THEME APPLICATION
+# ===========================
+theme = st.session_state.get('theme', 'dark')
+if theme == "dark":
+    css = """
+<style>
+html, body, [data-testid="stAppViewContainer"] { background:#0a0a0a !important; }
+[data-testid="stSidebar"] { display:none !important; }
+.chat-container { background:#000; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #2f2f2f; }
+.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.4); }
+.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
+.bot-msg { background:#1e1e1e; color:#e5e5e5; margin-right:auto; border-top-left-radius:4px; }
+input { background:#111 !important; color:white !important; border:1px solid #333 !important; border-radius:8px !important; }
+button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
+h1,h2,h3,p,label { color:white !important; }
+/* GREETING POPUP */
+.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #0d47a1; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.6); }
+@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
+/* TOGGLE SWITCH */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 50px;
+  height: 25px;
+  background: #ccc;
+  border-radius: 25px;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+input[type="checkbox"]:checked {
+  background: #0078d4;
+}
+input[type="checkbox"]:before {
+  content: "";
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s;
+}
+input[type="checkbox"]:checked:before {
+  left: 27px;
+}
+</style>
+"""
+else:
+    css = """
+<style>
+html, body, [data-testid="stAppViewContainer"] { background:#ffffff !important; }
+[data-testid="stSidebar"] { display:none !important; }
+.chat-container { background:#f0f0f0; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #ddd; }
+.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.1); }
+.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
+.bot-msg { background:#e0e0e0; color:#333; margin-right:auto; border-top-left-radius:4px; }
+input { background:#fff !important; color:#000 !important; border:1px solid #ccc !important; border-radius:8px !important; }
+button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
+h1,h2,h3,p,label { color:#000 !important; }
+/* GREETING POPUP */
+.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #4a90e2; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.3); }
+@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
+/* TOGGLE SWITCH */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 50px;
+  height: 25px;
+  background: #ccc;
+  border-radius: 25px;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+input[type="checkbox"]:checked {
+  background: #0078d4;
+}
+input[type="checkbox"]:before {
+  content: "";
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s;
+}
+input[type="checkbox"]:checked:before {
+  left: 27px;
+}
+</style>
+"""
+st.markdown(css, unsafe_allow_html=True)
+
+# ===========================
 # 🔐 LOGIN WITH CREATE ACCOUNT + FAILED ATTEMPTS + COUNTDOWN LOCK
 # ===========================
 
