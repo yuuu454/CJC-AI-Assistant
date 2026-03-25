@@ -1,3 +1,4 @@
+
 import os
 import json
 import streamlit as st
@@ -556,6 +557,11 @@ FINAL ANSWER (context only):
 
 st.markdown("<h2>📘 CFAIA Assistant</h2>", unsafe_allow_html=True)
 
+# ===========================
+# 🎨 THEME TOGGLE
+# ===========================
+theme_toggle = st.checkbox("🌙 Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
+st.session_state['theme'] = 'dark' if theme_toggle else 'light'
 
 # -----------------------------
 # 📖 Collapsible FAQ (auto-record user questions)
