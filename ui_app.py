@@ -63,6 +63,27 @@ input[type="checkbox"]:before {
 input[type="checkbox"]:checked:before {
   left: 27px;
 }
+/* Outer chat container */
+.chat-container {
+    background-color: #1e1e1e;
+    color: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+}
+/* Remove individual message bubbles */
+.chat-container .msg {
+    margin-bottom: 8px;
+}
+/* Optional: distinguish user and bot text with subtle color */
+.chat-container .user-msg {
+    color: #a5d6ff;
+}
+.chat-container .bot-msg {
+    color: #fff;
+}
 </style>
 """
 else:
@@ -108,6 +129,27 @@ input[type="checkbox"]:before {
 }
 input[type="checkbox"]:checked:before {
   left: 27px;
+}
+/* Outer chat container */
+.chat-container {
+    background-color: #f0f0f0;
+    color: #000;
+    padding: 16px;
+    border-radius: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+}
+/* Remove individual message bubbles */
+.chat-container .msg {
+    margin-bottom: 8px;
+}
+/* Optional: distinguish user and bot text with subtle color */
+.chat-container .user-msg {
+    color: #0078D4;
+}
+.chat-container .bot-msg {
+    color: #333;
 }
 </style>
 """
@@ -393,26 +435,6 @@ for key, default in {
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
-
-# ===========================
-# 🎨 WINDOWS STYLE UI
-# ===========================
-st.markdown("""
-<style>
-html, body, [data-testid="stAppViewContainer"] { background:#0a0a0a !important; }
-[data-testid="stSidebar"] { display:none !important; }
-.chat-container { background:#000; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #2f2f2f; }
-.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.4); }
-.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
-.bot-msg { background:#1e1e1e; color:#e5e5e5; margin-right:auto; border-top-left-radius:4px; }
-input { background:#111 !important; color:white !important; border:1px solid #333 !important; border-radius:8px !important; }
-button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
-h1,h2,h3,p,label { color:white !important; }
-/* GREETING POPUP */
-.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #0d47a1; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.6); }
-@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
-</style>
-""", unsafe_allow_html=True)
 
 # ===========================
 # 👋 GREETING POPUP
@@ -729,37 +751,6 @@ if not st.session_state.logged_in:
 
 
 
-
-# ===========================
-# Chat UI
-# ===========================
-st.markdown("""
-<style>
-/* Outer chat container */
-.chat-container {
-    background-color: #1e1e1e;  /* Dark background */
-    color: #fff;                /* Text color */
-    padding: 16px;
-    border-radius: 12px;
-    max-height: 500px;
-    overflow-y: auto;
-    font-family: Arial, sans-serif;
-}
-
-/* Remove individual message bubbles */
-.chat-container .msg {
-    margin-bottom: 8px;
-}
-
-/* Optional: distinguish user and bot text with subtle color */
-.chat-container .user-msg {
-    color: #a5d6ff;
-}
-.chat-container .bot-msg {
-    color: #fff;
-}
-</style>
-""", unsafe_allow_html=True)
 
 import streamlit as st
 import time
