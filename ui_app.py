@@ -560,8 +560,11 @@ st.markdown("<h2>📘 CFAIA Assistant</h2>", unsafe_allow_html=True)
 # ===========================
 # 🎨 THEME TOGGLE
 # ===========================
-theme_toggle = st.checkbox("🌙 Dark Mode", value=st.session_state.get('theme', 'dark') == 'dark')
-st.session_state['theme'] = 'dark' if theme_toggle else 'light'
+current_theme = st.session_state.get('theme', 'dark')
+button_label = "🌙 Switch to White" if current_theme == 'dark' else "☀️ Switch to Dark"
+if st.button(button_label):
+    st.session_state['theme'] = 'light' if current_theme == 'dark' else 'dark'
+    st.rerun()
 
 # -----------------------------
 # 📖 Collapsible FAQ (auto-record user questions)
