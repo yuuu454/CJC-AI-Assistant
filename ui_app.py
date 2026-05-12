@@ -475,7 +475,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://california-jump-fleet-silicon.trycloudflare.com"
+        base_url="  https://dui-closest-admissions-rev.trycloudflare.com"
       
 
     )
