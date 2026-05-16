@@ -286,9 +286,13 @@ if not st.session_state["logged_in"]:
                 st.error("❌ Passwords do not match")
             else:
                 st.session_state["users"][new_user] = new_pass
-                save_users()
+                save_users()  # Save immediately to users.json
                 st.success(f"✅ Account created for {new_user}")
                 st.session_state["show_create"] = False
+                st.session_state["logged_in"] = True
+                st.session_state["username"] = new_user
+                st.session_state["failed_attempts"] = 0
+                st.session_state["lock_until"] = 0
                 st.rerun()
 
         if back_btn:
