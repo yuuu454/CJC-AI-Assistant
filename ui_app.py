@@ -289,10 +289,6 @@ if not st.session_state["logged_in"]:
                 save_users()  # Save immediately to users.json
                 st.success(f"✅ Account created for {new_user}")
                 st.session_state["show_create"] = False
-                st.session_state["logged_in"] = True
-                st.session_state["username"] = new_user
-                st.session_state["failed_attempts"] = 0
-                st.session_state["lock_until"] = 0
                 st.rerun()
 
         if back_btn:
@@ -479,7 +475,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://tract-festival-telecom-floor.trycloudflare.com"
+        base_url="https://dui-closest-admissions-rev.trycloudflare.com"
       
 
     )
