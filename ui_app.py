@@ -458,11 +458,28 @@ if "handbook_text" not in st.session_state:
         st.session_state.handbook_text = f.read()
 
 FAISS_DIR = "faiss_index"
-EMBEDDING_MODEL = "https://interesting-publicly-harry-primary.trycloudflare.com"
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+MODELS_CACHE_DIR = os.path.expanduser("~/.cache/huggingface/hub")
 
 @st.cache_resource
 def build_or_load_vector_store(text):
-    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL, model_kwargs={"device": "cpu"})
+    try:
+        embeddings = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL,
+            model_kwargs={"device": "cpu"},
+            cache_folder=MODELS_CACHE_DIR
+        )
+    except Exception as e:
+        st.error(f"Failed to load embedding model: {str(e)}")
+        st.info("Attempting to download model. This may take a few minutes...")
+        # Try downloading with explicit cache settings
+        embeddings = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL,
+            model_kwargs={"device": "cpu"},
+            cache_folder=MODELS_CACHE_DIR,
+            encode_kwargs={"normalize_embeddings": True}
+        )
+    
     if not os.path.exists(FAISS_DIR):
         splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         docs = splitter.create_documents([text])
@@ -475,7 +492,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://tract-festival-telecom-floor.trycloudflare.com"
+        base_url="https://interesting-publicly-harry-primary.trycloudflare.com"
       
 
     )
