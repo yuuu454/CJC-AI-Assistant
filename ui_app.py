@@ -458,7 +458,7 @@ if "handbook_text" not in st.session_state:
         st.session_state.handbook_text = f.read()
 
 FAISS_DIR = "faiss_index"
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_MODEL = "https://interesting-publicly-harry-primary.trycloudflare.com"
 
 @st.cache_resource
 def build_or_load_vector_store(text):
