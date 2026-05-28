@@ -10,11 +10,7 @@ from langchain_ollama import OllamaLLM
 import time
 import re  # <- anti-prompt-injection
 
-try:
-    import torchvision
-except ModuleNotFoundError:
-    torchvision = None
-    st.warning("`torchvision` is not installed. Image features will be disabled.")
+
 
 # ===========================
 # 🔧 STREAMLIT SETUP
