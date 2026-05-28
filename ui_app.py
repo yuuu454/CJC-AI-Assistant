@@ -470,7 +470,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://tend-technique-coordinate-reid.trycloudflare.com"
+        base_url="https://jimmy-ordinance-further-conjunction.trycloudflare.com"
       
 
     )
