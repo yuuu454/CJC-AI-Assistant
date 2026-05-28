@@ -464,7 +464,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://interesting-publicly-harry-primary.trycloudflare.com"
+        base_url="https://unlimited-nec-chi-hook.trycloudflare.com"
       
 
     )
