@@ -1,4 +1,3 @@
-
 import os
 import json
 import streamlit as st
@@ -10,152 +9,10 @@ from langchain_ollama import OllamaLLM
 import time
 import re  # <- anti-prompt-injection
 
-
-
 # ===========================
 # 🔧 STREAMLIT SETUP
 # ===========================
 st.set_page_config(page_title="CJC Handbook RAG Assistant", layout="wide")
-
-# ===========================
-# 🎨 THEME APPLICATION
-# ===========================
-theme = st.session_state.get('theme', 'dark')
-if theme == "dark":
-    css = """
-<style>
-html, body, [data-testid="stAppViewContainer"] { background:#0a0a0a !important; }
-[data-testid="stSidebar"] { display:none !important; }
-.chat-container { background:#000; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #2f2f2f; }
-.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.4); }
-.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
-.bot-msg { background:#1e1e1e; color:#e5e5e5; margin-right:auto; border-top-left-radius:4px; }
-input { background:#111 !important; color:white !important; border:1px solid #333 !important; border-radius:8px !important; }
-button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
-h1,h2,h3,p,label { color:white !important; }
-/* GREETING POPUP */
-.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #0d47a1; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.6); }
-@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
-/* TOGGLE SWITCH */
-input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  position: relative;
-  width: 50px;
-  height: 25px;
-  background: #ccc;
-  border-radius: 25px;
-  transition: background 0.3s;
-  cursor: pointer;
-}
-input[type="checkbox"]:checked {
-  background: #0078d4;
-}
-input[type="checkbox"]:before {
-  content: "";
-  position: absolute;
-  width: 21px;
-  height: 21px;
-  background: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  transition: left 0.3s;
-}
-input[type="checkbox"]:checked:before {
-  left: 27px;
-}
-/* Outer chat container */
-.chat-container {
-    background-color: #1e1e1e;
-    color: #fff;
-    padding: 16px;
-    border-radius: 12px;
-    max-height: 500px;
-    overflow-y: auto;
-    font-family: Arial, sans-serif;
-}
-/* Remove individual message bubbles */
-.chat-container .msg {
-    margin-bottom: 8px;
-}
-/* Optional: distinguish user and bot text with subtle color */
-.chat-container .user-msg {
-    color: #a5d6ff;
-}
-.chat-container .bot-msg {
-    color: #fff;
-}
-</style>
-"""
-else:
-    css = """
-<style>
-html, body, [data-testid="stAppViewContainer"] { background:#ffffff !important; }
-[data-testid="stSidebar"] { display:none !important; }
-.chat-container { background:#f0f0f0; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #ddd; }
-.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.1); }
-.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
-.bot-msg { background:#e0e0e0; color:#333; margin-right:auto; border-top-left-radius:4px; }
-input { background:#fff !important; color:#000 !important; border:1px solid #ccc !important; border-radius:8px !important; }
-button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
-h1,h2,h3,p,label { color:#000 !important; }
-/* GREETING POPUP */
-.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #4a90e2; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.3); }
-@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
-/* TOGGLE SWITCH */
-input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  position: relative;
-  width: 50px;
-  height: 25px;
-  background: #ccc;
-  border-radius: 25px;
-  transition: background 0.3s;
-  cursor: pointer;
-}
-input[type="checkbox"]:checked {
-  background: #0078d4;
-}
-input[type="checkbox"]:before {
-  content: "";
-  position: absolute;
-  width: 21px;
-  height: 21px;
-  background: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  transition: left 0.3s;
-}
-input[type="checkbox"]:checked:before {
-  left: 27px;
-}
-/* Outer chat container */
-.chat-container {
-    background-color: #f0f0f0;
-    color: #000;
-    padding: 16px;
-    border-radius: 12px;
-    max-height: 500px;
-    overflow-y: auto;
-    font-family: Arial, sans-serif;
-}
-/* Remove individual message bubbles */
-.chat-container .msg {
-    margin-bottom: 8px;
-}
-/* Optional: distinguish user and bot text with subtle color */
-.chat-container .user-msg {
-    color: #0078D4;
-}
-.chat-container .bot-msg {
-    color: #333;
-}
-</style>
-"""
-st.markdown(css, unsafe_allow_html=True)
 
 # ===========================
 # 🔐 LOGIN WITH CREATE ACCOUNT + FAILED ATTEMPTS + COUNTDOWN LOCK
@@ -288,7 +145,7 @@ if not st.session_state["logged_in"]:
                 st.error("❌ Passwords do not match")
             else:
                 st.session_state["users"][new_user] = new_pass
-                save_users()  # Save immediately to users.json
+                save_users()
                 st.success(f"✅ Account created for {new_user}")
                 st.session_state["show_create"] = False
                 st.rerun()
@@ -387,6 +244,34 @@ BLOCK_PATTERNS = [
     r"without using the handbook"
 ]
 
+ 
+# LOGIN LOGIC
+# -----------------------------
+if not st.session_state.logged_in:
+    st.title("Login Page")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        # Dummy login validation
+        if username and password:
+            st.session_state.logged_in = True
+            st.session_state.time_left = LOGOUT_SECONDS
+            st.session_state.last_update = time.time()
+
+       # -----------------------------
+        # AUTO LOGOUT WHEN TIME IS UP
+        # -----------------------------
+        if st.session_state.time_left <= 0:
+            st.session_state.logged_in = False  # log out
+            st.session_state.time_left = 0
+            st.rerun()
+
+        time.sleep(1)
+
+    if not st.session_state.logged_in:
+        timer_placeholder.markdown("⏰ Time is up! Logging out...")
+        st.session_state.time_left = LOGOUT_SECONDS
+        st.session_state.last_update = time.time()
 
 
 def is_prompt_injection(text: str) -> bool:
@@ -411,6 +296,26 @@ for key, default in {
         st.session_state[key] = default
 
 # ===========================
+# 🎨 WINDOWS STYLE UI
+# ===========================
+st.markdown("""
+<style>
+html, body, [data-testid="stAppViewContainer"] { background:#0a0a0a !important; }
+[data-testid="stSidebar"] { display:none !important; }
+.chat-container { background:#000; padding:16px; max-height:500px; overflow-y:auto; border-radius:12px; border:1px solid #2f2f2f; }
+.msg { max-width:70%; padding:10px 14px; margin:8px 0; border-radius:10px; line-height:1.5; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,.4); }
+.user-msg { background:#0078D4; color:white; margin-left:auto; border-top-right-radius:4px; }
+.bot-msg { background:#1e1e1e; color:#e5e5e5; margin-right:auto; border-top-left-radius:4px; }
+input { background:#111 !important; color:white !important; border:1px solid #333 !important; border-radius:8px !important; }
+button { background:#0078d4 !important; color:white !important; border-radius:8px !important; }
+h1,h2,h3,p,label { color:white !important; }
+/* GREETING POPUP */
+.greeting-box { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #0d47a1; color: white; padding: 25px 45px; font-size: 22px; border-radius: 15px; text-align: center; animation: fadeScale 3s ease; z-index: 9999; box-shadow: 0 0 20px rgba(0,0,0,.6); }
+@keyframes fadeScale { 0% {opacity:0; transform:translate(-50%, -60%) scale(0.8);} 15% {opacity:1; transform:translate(-50%, -50%) scale(1);} 80% {opacity:1;} 100% {opacity:0; transform:translate(-50%, -55%) scale(0.9);} }
+</style>
+""", unsafe_allow_html=True)
+
+# ===========================
 # 👋 GREETING POPUP
 # ===========================
 if st.session_state.get("show_greeting", False):
@@ -433,27 +338,10 @@ if "handbook_text" not in st.session_state:
 
 FAISS_DIR = "faiss_index"
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-MODELS_CACHE_DIR = os.path.expanduser("~/.cache/huggingface/hub")
 
 @st.cache_resource
 def build_or_load_vector_store(text):
-    try:
-        embeddings = HuggingFaceEmbeddings(
-            model_name=EMBEDDING_MODEL,
-            model_kwargs={"device": "cpu"},
-            cache_folder=MODELS_CACHE_DIR
-        )
-    except Exception as e:
-        st.error(f"Failed to load embedding model: {str(e)}")
-        st.info("Attempting to download model. This may take a few minutes...")
-        # Try downloading with explicit cache settings
-        embeddings = HuggingFaceEmbeddings(
-            model_name=EMBEDDING_MODEL,
-            model_kwargs={"device": "cpu"},
-            cache_folder=MODELS_CACHE_DIR,
-            encode_kwargs={"normalize_embeddings": True}
-        )
-    
+    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL, model_kwargs={"device": "cpu"})
     if not os.path.exists(FAISS_DIR):
         splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         docs = splitter.create_documents([text])
@@ -466,7 +354,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://jimmy-ordinance-further-conjunction.trycloudflare.com"
+        base_url="https://class-textbooks-cleared-current.trycloudflare.com"
       
 
     )
@@ -570,14 +458,6 @@ FINAL ANSWER (context only):
 
 st.markdown("<h2>📘 CFAIA Assistant</h2>", unsafe_allow_html=True)
 
-# ===========================
-# 🎨 THEME TOGGLE
-# ===========================
-current_theme = st.session_state.get('theme', 'dark')
-button_label = "🌙 Switch to White" if current_theme == 'dark' else "☀️ Switch to Dark"
-if st.button(button_label):
-    st.session_state['theme'] = 'light' if current_theme == 'dark' else 'dark'
-    st.rerun()
 
 # -----------------------------
 # 📖 Collapsible FAQ (auto-record user questions)
@@ -712,3 +592,157 @@ with st.form(key="chat_form", clear_on_submit=True):
         st.session_state.messages.append({"role": "bot", "content": reply})
         st.session_state.current_chat = st.session_state.messages.copy()
         st.rerun()
+
+
+
+import streamlit as st
+
+# -----------------------------
+# SESSION STATE INIT
+# -----------------------------
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "logout_clicked" not in st.session_state:
+    st.session_state.logout_clicked = False
+
+
+
+# -----------------------------
+# LOGIN SIMULATION
+# -----------------------------
+if not st.session_state.logged_in:
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        if username == "admin" and password == "admin123":
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.success(f"Welcome {username}")
+
+
+
+
+# ===========================
+# Chat UI
+# ===========================
+st.markdown("""
+<style>
+/* Outer chat container */
+.chat-container {
+    background-color: #1e1e1e;  /* Dark background */
+    color: #fff;                /* Text color */
+    padding: 16px;
+    border-radius: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+}
+
+/* Remove individual message bubbles */
+.chat-container .msg {
+    margin-bottom: 8px;
+}
+
+/* Optional: distinguish user and bot text with subtle color */
+.chat-container .user-msg {
+    color: #a5d6ff;
+}
+.chat-container .bot-msg {
+    color: #fff;
+}
+</style>
+""", unsafe_allow_html=True)
+
+import streamlit as st
+import time
+
+# -----------------------------
+# CONFIG
+# -----------------------------
+LOGOUT_SECONDS = 180  # 3 minutes
+
+# -----------------------------
+# SESSION STATE INIT
+# -----------------------------
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "time_left" not in st.session_state:
+    st.session_state.time_left = LOGOUT_SECONDS
+if "last_update" not in st.session_state:
+    st.session_state.last_update = time.time()
+if "retrieval_result" not in st.session_state:
+    st.session_state.retrieval_result = "This is your retrieved content!"
+if "retrieval_count" not in st.session_state:
+    st.session_state.retrieval_count = 0  # track how many times content retrieved
+
+# Initialize username
+if "username" not in st.session_state:
+    st.session_state.username = ""
+
+# -----------------------------
+# LOGIN LOGIC
+# -----------------------------
+if not st.session_state.logged_in:
+    st.title("Login Page")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        if username and password:
+            st.session_state.logged_in = True
+            st.session_state.time_left = LOGOUT_SECONDS
+            st.session_state.last_update = time.time()
+    st.stop()
+
+# -----------------------------
+# DISPLAY RETRIEVAL AND ADD 30-SECOND BUFFER
+# -----------------------------
+st.write(st.session_state.retrieval_result)
+
+# Add 30 seconds for every retrieval
+st.session_state.time_left += 200
+st.session_state.retrieval_count += 1  # optional: track number of queries
+st.info(f"⏳ Added 30 seconds! Total time left: {st.session_state.time_left} seconds")
+# TIMER PLACEHOLDER
+# -----------------------------
+timer_placeholder = st.empty()
+
+# -----------------------------
+# NON-BLOCKING TIMER WITH AUTO-LOGOUT
+# -----------------------------
+def update_timer():
+    while st.session_state.logged_in and st.session_state.time_left > 0:
+        current_time = time.time()
+        elapsed = int(current_time - st.session_state.last_update)
+        if elapsed > 0:
+            st.session_state.time_left -= elapsed
+            st.session_state.last_update = current_time
+
+        minutes = st.session_state.time_left // 60
+        seconds = st.session_state.time_left % 60
+        timer_placeholder.markdown(f"⏳ Auto logout in: **{minutes:02d}:{seconds:02d}**")
+
+        # -----------------------------
+        # AUTO LOGOUT WHEN TIME IS UP
+        # -----------------------------
+        if st.session_state.time_left <= 0:
+            st.session_state.logged_in = False
+            st.session_state.time_left = 0
+            st.rerun()
+
+        time.sleep(1)
+
+    if not st.session_state.logged_in:
+        timer_placeholder.markdown("⏰ Time is up! Logging out...")
+        st.session_state.time_left = LOGOUT_SECONDS
+        st.session_state.last_update = time.time()
+
+
+# Call the timer function
+update_timer()
+
+if st.session_state.time_left <= 0:
+    st.session_state.logged_in = False  # log out
+    st.session_state.username = ""      # reset username
+    st.session_state.time_left = LOGOUT_SECONDS
+    st.rerun()  # redirect to login page immediately
