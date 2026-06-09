@@ -354,7 +354,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="cloudflared tunnel --url http://localhost:11434 --http-host-header="localhost:11434"
+        base_url="https://dramatically-another-ppc-interim.trycloudflare.com"
       
 
     )
