@@ -354,7 +354,7 @@ def build_or_load_vector_store(text):
 def init_llm():
     return OllamaLLM(
         model="CFAIA:latest",
-        base_url="https://personals-original-cover-township.trycloudflare.com"
+        base_url="https://samples-offshore-hrs-stylus.trycloudflare.com"
       
 
     )
